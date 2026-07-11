@@ -1,0 +1,8 @@
+{
+  "item.lead.break": {
+    "replace": true,
+    "sounds": [
+      "item/lead/lead_break"
+    ]
+  }
+}

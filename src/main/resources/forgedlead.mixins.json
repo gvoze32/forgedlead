@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.example.forgedlead.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LeashableMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
