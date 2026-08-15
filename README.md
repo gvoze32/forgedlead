@@ -1,6 +1,6 @@
 Makes leads (leashes) unbreakable in Minecraft. No more leads snapping when your animals wander too far!
 
-ForgedLead combines the best features from multiple lead improvement mods into a single, lightweight NeoForge mod.
+ForgedLead combines the best features from multiple lead improvement mods into a single, lightweight cross-loader mod.
 
 ## Features
 
@@ -11,12 +11,33 @@ ForgedLead combines the best features from multiple lead improvement mods into a
 
 ## Supported Versions
 
-- 1.21.1 (NeoForge)
+| Minecraft | Loader |
+| --- | --- |
+| 1.18.2 | Forge |
+| 1.18.2 | Fabric |
+| 1.19.2 | Forge |
+| 1.19.2 | Fabric |
+| 1.20.1 | Forge |
+| 1.20.1 | Fabric |
+| 1.21.1 | Fabric |
+| 1.21.1 | NeoForge |
+| 1.21.11 | Fabric |
+| 1.21.11 | NeoForge |
+| 26.1.2 | Fabric |
+| 26.1.2 | NeoForge |
+| 26.2 | Fabric |
+| 26.2 | NeoForge |
+
+The target matrix is maintained with Stonecraft and Stonecutter. Shared gameplay
+and mixin logic live in `src/main`; loader entrypoint branches use Stonecutter
+conditions, and loader metadata stays in shared resources with target
+placeholders.
 
 ## FAQ
 
 **Can I use this in my modpack?** Yes! Feel free to include this mod in any Modrinth or CurseForge modpack.
 
-**Will you port this to Fabric or older versions?** Currently, this mod is developed specifically for NeoForge 1.21.1.
+**Will this work on all supported loaders?** Yes. Each target ships native
+Fabric, Forge, or NeoForge metadata while sharing the same lead behavior.
 
 **Does this affect lead behavior when the mob dies?** No. Leads still drop normally when the leashed mob dies or when you shear the lead off. This mod only prevents leads from snapping due to distance.
