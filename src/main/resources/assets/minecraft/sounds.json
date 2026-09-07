@@ -1,8 +1,6 @@
 {
-  "item.lead.break": {
+  "entity.leash_knot.break": {
     "replace": true,
-    "sounds": [
-      "item/lead/lead_break"
-    ]
+    "sounds": []
   }
 }
