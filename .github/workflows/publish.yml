@@ -3,60 +3,75 @@ name: Publish
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   publish:
-    name: Publish Minecraft ${{ matrix.minecraft }}
+    name: Publish Minecraft ${{ matrix.minecraft }} (${{ matrix.loader }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           - minecraft: "1.18.2"
-            gradle_tasks: ":1.18.2-fabric:build :1.18.2-forge:build"
-            loaders: |
-              fabric
-              forge
+            loader: fabric
+            gradle_task: ":1.18.2-fabric:build"
+          - minecraft: "1.18.2"
+            loader: forge
+            gradle_task: ":1.18.2-forge:build"
           - minecraft: "1.19.2"
-            gradle_tasks: ":1.19.2-fabric:build :1.19.2-forge:build"
-            loaders: |
-              fabric
-              forge
+            loader: fabric
+            gradle_task: ":1.19.2-fabric:build"
+          - minecraft: "1.19.2"
+            loader: forge
+            gradle_task: ":1.19.2-forge:build"
           - minecraft: "1.20.1"
-            gradle_tasks: ":1.20.1-fabric:build :1.20.1-forge:build"
-            loaders: |
-              fabric
-              forge
+            loader: fabric
+            gradle_task: ":1.20.1-fabric:build"
+          - minecraft: "1.20.1"
+            loader: forge
+            gradle_task: ":1.20.1-forge:build"
           - minecraft: "1.21.1"
-            gradle_tasks: ":1.21.1-fabric:build :1.21.1-neoforge:build"
-            loaders: |
-              fabric
-              neoforge
+            loader: fabric
+            gradle_task: ":1.21.1-fabric:build"
+          - minecraft: "1.21.1"
+            loader: neoforge
+            gradle_task: ":1.21.1-neoforge:build"
           - minecraft: "1.21.11"
-            gradle_tasks: ":1.21.11-fabric:build :1.21.11-neoforge:build"
-            loaders: |
-              fabric
-              neoforge
+            loader: fabric
+            gradle_task: ":1.21.11-fabric:build"
+          - minecraft: "1.21.11"
+            loader: neoforge
+            gradle_task: ":1.21.11-neoforge:build"
           - minecraft: "26.1.2"
-            gradle_tasks: ":26.1.2-fabric:build :26.1.2-neoforge:build"
-            loaders: |
-              fabric
-              neoforge
+            loader: fabric
+            gradle_task: ":26.1.2-fabric:build"
+          - minecraft: "26.1.2"
+            loader: neoforge
+            gradle_task: ":26.1.2-neoforge:build"
           - minecraft: "26.2"
-            gradle_tasks: ":26.2-fabric:build :26.2-neoforge:build"
-            loaders: |
-              fabric
-              neoforge
+            loader: fabric
+            gradle_task: ":26.2-fabric:build"
+          - minecraft: "26.2"
+            loader: neoforge
+            gradle_task: ":26.2-neoforge:build"
 
     steps:
       - name: Check out release
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
 
       - name: Set up Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
@@ -65,24 +80,25 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build artifacts
-        run: ./gradlew ${{ matrix.gradle_tasks }}
+        run: ./gradlew ${{ matrix.gradle_task }}
 
       - name: Publish to Modrinth and CurseForge
         uses: Kira-NT/mc-publish@v3
         with:
-          files: versions/${{ matrix.minecraft }}-*/build/libs/*.jar
+          files: versions/${{ matrix.minecraft }}-${{ matrix.loader }}/build/libs/*.jar
 
           modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-unfeature-mode: none
 
           curseforge-id: ${{ vars.CURSEFORGE_PROJECT_ID }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
-          name: ForgedLead ${{ github.event.release.tag_name }} / Minecraft ${{ matrix.minecraft }}
-          version: ${{ github.event.release.tag_name }}-${{ matrix.minecraft }}
+          name: ForgedLead ${{ github.event.release.tag_name || inputs.tag }} / Minecraft ${{ matrix.minecraft }}
+          version: ${{ github.event.release.tag_name || inputs.tag }}-${{ matrix.minecraft }}-${{ matrix.loader }}
           version-type: release
-          changelog: ${{ github.event.release.body }}
-          loaders: ${{ matrix.loaders }}
+          changelog: ${{ github.event.release.body || '' }}
+          loaders: ${{ matrix.loader }}
           environment: client | server
           game-versions: ${{ matrix.minecraft }}
           game-version-filter: none
