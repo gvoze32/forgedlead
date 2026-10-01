@@ -31,7 +31,7 @@ ForgedLead combines the best features from multiple lead improvement mods into a
 The target matrix is maintained with Stonecraft and Stonecutter. Shared gameplay
 and mixin logic live in `src/main`; loader entrypoint branches use Stonecutter
 conditions, and loader metadata stays in shared resources with target
-placeholders.
+placeholders. Builds compile the version-processed Java output for each target.
 
 ## FAQ
 
