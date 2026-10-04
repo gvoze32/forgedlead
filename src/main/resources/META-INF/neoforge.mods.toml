@@ -12,7 +12,7 @@ description='''${description}'''
 [[dependencies.${id}]]
 modId="minecraft"
 type="required"
-versionRange="[${minecraftVersion},)"
+versionRange="[${minecraftVersion}]"
 ordering="NONE"
 side="BOTH"
 

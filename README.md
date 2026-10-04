@@ -5,8 +5,8 @@ ForgedLead combines the best features from multiple lead improvement mods into a
 ## Features
 
 - Leads will never snap due to distance, no matter how far the leashed entity wanders
-- If the break condition is somehow triggered, it gets cancelled as a safety net
-- The lead break sound effect is muted to avoid audio clutter
+- Leashed mobs that fall behind are still pulled back toward you instead of getting stuck
+- No lead-break sound spam: the snap never happens, so the sound never plays
 - Lightweight and performance-friendly, pure Mixin-based with no overhead
 
 ## Supported Versions
