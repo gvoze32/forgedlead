@@ -102,3 +102,43 @@ jobs:
           environment: client | server
           game-versions: ${{ matrix.minecraft }}
           game-version-filter: none
+
+      - name: Keep jar for GitHub release
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-${{ matrix.minecraft }}-${{ matrix.loader }}
+          path: versions/${{ matrix.minecraft }}-${{ matrix.loader }}/build/libs/*.jar
+          if-no-files-found: error
+          # "Re-run failed jobs" keeps artifacts from earlier attempts; a rerun
+          # of a job whose upload already happened must not fail on the name.
+          overwrite: true
+
+  github-release:
+    name: Attach jars to GitHub release
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download jars
+        uses: actions/download-artifact@v4
+        with:
+          pattern: jar-*
+          path: jars
+          merge-multiple: true
+
+      # Changes made with GITHUB_TOKEN do not trigger workflows, so creating
+      # or editing the release here cannot start another publish run.
+      - name: Attach jars to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" jars/*.jar --clobber
+          else
+            gh release create "$TAG" jars/*.jar --verify-tag \
+              --title "ForgedLead $TAG" --generate-notes
+          fi
